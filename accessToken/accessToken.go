@@ -1,4 +1,8 @@
-package spotify
+// GetAccessToken is based on Python library
+// https://github.com/enriquegh/spotify-webplayer-token/blob/master/spotify_token.py
+//
+
+package accessToken
 
 import (
 	"fmt"
@@ -14,6 +18,13 @@ type AccessToken struct {
 	AccessToken string
 	Expiration  int
 }
+
+var BonCookie = "Eeg8phaiKah4JeekirooGhoh3faehoo0yieghoeghahlaeX7a"
+var UserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+
+var spotifyLoginUrl = "https://accounts.spotify.com/login"
+var spotifyLoginApiUrl = "https://accounts.spotify.com/api/login"
+var spotifyBrowseUrl = "https://open.spotify.com/browse"
 
 func GetAccessToken(username string, password string) AccessToken {
 	jar, err := cookiejar.New(
@@ -40,7 +51,7 @@ func GetAccessToken(username string, password string) AccessToken {
 	var cookies []*http.Cookie
 	cookie := &http.Cookie{
 		Name:   "__bon",
-		Value:  "MHwwfC01ODc4MjExMzJ8LTI0Njg4NDg3NTQ0fDF8MXwxfDE",
+		Value:  BonCookie,
 		Path:   "/",
 		Domain: spotifyUrl.Host,
 	}
@@ -52,7 +63,7 @@ func GetAccessToken(username string, password string) AccessToken {
 		CheckRedirect: nil,
 		Jar:           jar,
 	}
-	preLoginResponse, err := client.Get("https://accounts.spotify.com/login")
+	preLoginResponse, err := client.Get(spotifyLoginUrl)
 
 	if err != nil {
 		fmt.Errorf(err.Error())
@@ -80,7 +91,7 @@ func GetAccessToken(username string, password string) AccessToken {
 	data.Add("password", password)
 	data.Add("csrf_token", token)
 
-	loginResponse, err := client.PostForm("https://accounts.spotify.com/api/login", data)
+	loginResponse, err := client.PostForm(spotifyLoginApiUrl, data)
 
 	if err != nil {
 		fmt.Errorf(err.Error())
@@ -92,13 +103,13 @@ func GetAccessToken(username string, password string) AccessToken {
 		panic(loginResponse.Status)
 	}
 
-	browseRequest, err := http.NewRequest("GET", "https://open.spotify.com/browse", nil)
+	browseRequest, err := http.NewRequest("GET", spotifyBrowseUrl, nil)
 	if err != nil {
 		fmt.Errorf(err.Error())
 		panic(err)
 	}
 
-	browseRequest.Header.Set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36")
+	browseRequest.Header.Set("user-agent", UserAgent)
 
 	browseResponse, err := client.Do(browseRequest)
 	if err != nil {
