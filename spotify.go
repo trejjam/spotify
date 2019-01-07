@@ -110,8 +110,6 @@ func GetAccessToken(username string, password string) AccessToken {
 		panic(browseResponse.Status)
 	}
 
-	fmt.Println(browseResponse.Status)
-
 	cookies = client.Jar.Cookies(browseResponse.Request.URL)
 
 	var accessToken string
