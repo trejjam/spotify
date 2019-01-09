@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/trejjam/spotify/url/login"
 	"golang.org/x/net/publicsuffix"
 )
 
@@ -21,10 +22,6 @@ type AccessToken struct {
 
 var BonCookie = "MHwwfC0xODMxNzI2NTk2fC03NjkzMjUxNzAzMnwxfDF8MXwx"
 var UserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
-
-var spotifyLoginUrl = "https://accounts.spotify.com/login"
-var spotifyLoginApiUrl = "https://accounts.spotify.com/api/login"
-var spotifyBrowseUrl = "https://open.spotify.com/browse"
 
 func GetAccessToken(username string, password string) AccessToken {
 	jar, err := cookiejar.New(
@@ -63,7 +60,7 @@ func GetAccessToken(username string, password string) AccessToken {
 		CheckRedirect: nil,
 		Jar:           jar,
 	}
-	preLoginResponse, err := client.Get(spotifyLoginUrl)
+	preLoginResponse, err := client.Get(login.Login)
 
 	if err != nil {
 		fmt.Errorf(err.Error())
@@ -91,7 +88,7 @@ func GetAccessToken(username string, password string) AccessToken {
 	data.Add("password", password)
 	data.Add("csrf_token", token)
 
-	loginResponse, err := client.PostForm(spotifyLoginApiUrl, data)
+	loginResponse, err := client.PostForm(login.LoginApi, data)
 
 	if err != nil {
 		fmt.Errorf(err.Error())
@@ -103,7 +100,7 @@ func GetAccessToken(username string, password string) AccessToken {
 		panic(loginResponse.Status)
 	}
 
-	browseRequest, err := http.NewRequest("GET", spotifyBrowseUrl, nil)
+	browseRequest, err := http.NewRequest("GET", login.Browse, nil)
 	if err != nil {
 		fmt.Errorf(err.Error())
 		panic(err)
