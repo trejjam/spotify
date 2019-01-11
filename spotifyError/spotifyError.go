@@ -14,6 +14,17 @@ func (error *UnexpectedResponseCodeError) Error() string {
 	return fmt.Sprintf("Unexpected response code %s", error.Status)
 }
 
+func Validate200Response(response *http.Response) error {
+	if response.StatusCode != 200 {
+		return &UnexpectedResponseCodeError{
+			Status:     response.Status,
+			StatusCode: response.StatusCode,
+		}
+	}
+
+	return nil
+}
+
 type EmptyCsrfError struct {
 	Cookies []*http.Cookie
 }

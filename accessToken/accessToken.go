@@ -5,6 +5,7 @@
 package accessToken
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -18,6 +19,17 @@ import (
 type AccessToken struct {
 	AccessToken string
 	Expiration  int
+}
+
+func (accessToken *AccessToken) CreateGetRequest(url string) (*http.Request, error) {
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken.AccessToken))
+
+	return request, nil
 }
 
 var BonCookie = "MHwwfC0xODMxNzI2NTk2fC03NjkzMjUxNzAzMnwxfDF8MXwx"
@@ -68,11 +80,9 @@ func getCsrfToken(client *http.Client) (string, error) {
 		return "", err
 	}
 
-	if preLoginResponse.StatusCode != 200 {
-		return "", &spotifyError.UnexpectedResponseCodeError{
-			Status:     preLoginResponse.Status,
-			StatusCode: preLoginResponse.StatusCode,
-		}
+	err = spotifyError.Validate200Response(preLoginResponse)
+	if err != nil {
+		return "", err
 	}
 
 	cookies := client.Jar.Cookies(preLoginResponse.Request.URL)
@@ -107,11 +117,9 @@ func processLogin(client *http.Client, username, password, csrfToken string) err
 		return err
 	}
 
-	if loginResponse.StatusCode != 200 {
-		return &spotifyError.UnexpectedResponseCodeError{
-			Status:     loginResponse.Status,
-			StatusCode: loginResponse.StatusCode,
-		}
+	err = spotifyError.Validate200Response(loginResponse)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -130,11 +138,9 @@ func getAccessTokenUsingBrowse(client *http.Client) (*AccessToken, error) {
 		return nil, err
 	}
 
-	if browseResponse.StatusCode != 200 {
-		return nil, &spotifyError.UnexpectedResponseCodeError{
-			Status:     browseResponse.Status,
-			StatusCode: browseResponse.StatusCode,
-		}
+	err = spotifyError.Validate200Response(browseResponse)
+	if err != nil {
+		return nil, err
 	}
 
 	cookies := client.Jar.Cookies(browseResponse.Request.URL)
