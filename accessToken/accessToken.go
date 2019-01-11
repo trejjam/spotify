@@ -37,8 +37,8 @@ func initHttpClient() (*http.Client, error) {
 	spotifyUrl := &url.URL{
 		Scheme:     "https",
 		Opaque:     "",
-		Host:       "accounts.spotify.com",
-		Path:       "/login",
+		Host:       login.Domain,
+		Path:       login.Path,
 		ForceQuery: false,
 		RawPath:    "",
 		Fragment:   "",
