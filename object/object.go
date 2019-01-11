@@ -13,14 +13,15 @@ type Device struct {
 }
 
 func (device *Device) String() string {
-	return fmt.Sprintf(
-		`Id: %s"
-IsActive: %t
-IsPrivateSession: %t
-IsRestricted: %t
-Name: %s
-Type: %s
-VolumePercent: %d`,
+	return fmt.Sprintf(`{
+  Id: %s
+  IsActive: %t
+  IsPrivateSession: %t
+  IsRestricted: %t
+  Name: %s
+  Type: %s
+  VolumePercent: %d
+}`,
 		device.Id,
 		device.IsActive,
 		device.IsPrivateSession,
