@@ -39,4 +39,18 @@ func main() {
 	}
 
 	fmt.Println(recentlyPlayedTracks.String())
+
+	currentlyPlaying, err := GetCurrentlyPlaying(accessToken, "CZ")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(currentlyPlaying)
+
+	currentlyPlayingTrack, err := GetCurrentlyPlayingTrack(accessToken, "CZ")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(currentlyPlayingTrack)
 }

@@ -108,7 +108,7 @@ func main() {
 
 			time.Sleep(1 * time.Second)
 
-			err = TransferPlayback(accessToken, false, device2)
+			err = TransferPlayback(accessToken, true, device2)
 			if err != nil {
 				panic(err)
 			}
@@ -118,6 +118,12 @@ func main() {
 			err = Play(accessToken, device1)
 			if err != nil {
 				panic(err)
+			}
+
+			err = SetVolume(accessToken, 10, device2)
+			if err != nil {
+				// device may not support setVolume
+				fmt.Println(err)
 			}
 
 			time.Sleep(3 * time.Second)

@@ -162,7 +162,10 @@ func NextTrack(accessToken *accessToken.AccessToken, device *object.Device) erro
 	}
 
 	if device != nil {
-		requestUrl.Query().Add("device_id", device.Id)
+		requestQuery := requestUrl.Query()
+		requestQuery.Add("device_id", device.Id)
+
+		requestUrl.RawQuery = requestQuery.Encode()
 	}
 
 	err = performEmptyNoResponsePost(accessToken, requestUrl.String())
@@ -308,7 +311,10 @@ func Play(accessToken *accessToken.AccessToken, device *object.Device) error {
 	}
 
 	if device != nil {
-		requestUrl.Query().Add("device_id", device.Id)
+		requestQuery := requestUrl.Query()
+		requestQuery.Add("device_id", device.Id)
+
+		requestUrl.RawQuery = requestQuery.Encode()
 	}
 
 	err = performEmptyNoResponsePut(accessToken, requestUrl.String())
@@ -319,15 +325,13 @@ func Play(accessToken *accessToken.AccessToken, device *object.Device) error {
 	return nil
 }
 
-type RepeatMode string
-
 const (
-	RepeatModeTrack   RepeatMode = "track"
-	RepeatModeContext RepeatMode = "context"
-	RepeatModeOff     RepeatMode = "off"
+	RepeatModeTrack   object.RepeatMode = "track"
+	RepeatModeContext object.RepeatMode = "context"
+	RepeatModeOff     object.RepeatMode = "off"
 )
 
-func SetRepeatMode(accessToken *accessToken.AccessToken, state RepeatMode, device *object.Device) error {
+func SetRepeatMode(accessToken *accessToken.AccessToken, state object.RepeatMode, device *object.Device) error {
 	requestUrl, err := url.Parse(player.SetRepeatModeOnUserPlayback)
 	if err != nil {
 		return err
@@ -349,6 +353,69 @@ func SetRepeatMode(accessToken *accessToken.AccessToken, state RepeatMode, devic
 	return nil
 }
 
+func GetCurrentlyPlaying(accessToken *accessToken.AccessToken, market string) (*object.CurrentlyPlaying, error) {
+	requestUrl, err := url.Parse(player.GetInformationAboutTheUserCurrentPlayback)
+	if err != nil {
+		return nil, err
+	}
+
+	requestQuery := requestUrl.Query()
+	requestQuery.Add("market", market)
+
+	requestUrl.RawQuery = requestQuery.Encode()
+
+	currentlyPlaying := new(object.CurrentlyPlaying)
+	err = performDebugGet(accessToken, requestUrl.String(), currentlyPlaying)
+	if err != nil {
+		return nil, err
+	}
+
+	return currentlyPlaying, nil
+}
+
+func GetCurrentlyPlayingTrack(accessToken *accessToken.AccessToken, market string) (*object.CurrentlyPlayingTrack, error) {
+	requestUrl, err := url.Parse(player.GetUserCurrentlyPlayingTrack)
+	if err != nil {
+		return nil, err
+	}
+
+	requestQuery := requestUrl.Query()
+	requestQuery.Add("market", market)
+
+	requestUrl.RawQuery = requestQuery.Encode()
+
+	currentlyPlayingTrack := new(object.CurrentlyPlayingTrack)
+	err = performDebugGet(accessToken, requestUrl.String(), currentlyPlayingTrack)
+	if err != nil {
+		return nil, err
+	}
+
+	return currentlyPlayingTrack, nil
+}
+
+func SetVolume(accessToken *accessToken.AccessToken, volumePercent int, device *object.Device) error {
+	requestUrl, err := url.Parse(player.SetVolumeForUserPlayback)
+	if err != nil {
+		return err
+	}
+
+	requestQuery := requestUrl.Query()
+	requestQuery.Add("volume_percent", strconv.Itoa(volumePercent))
+
+	if device != nil {
+		requestQuery.Add("device_id", device.Id)
+	}
+
+	requestUrl.RawQuery = requestQuery.Encode()
+
+	err = performEmptyNoResponsePut(accessToken, requestUrl.String())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func Pause(accessToken *accessToken.AccessToken, device *object.Device) error {
 	requestUrl, err := url.Parse(player.PauseUserPlayback)
 	if err != nil {
@@ -356,7 +423,10 @@ func Pause(accessToken *accessToken.AccessToken, device *object.Device) error {
 	}
 
 	if device != nil {
-		requestUrl.Query().Add("device_id", device.Id)
+		requestQuery := requestUrl.Query()
+		requestQuery.Add("device_id", device.Id)
+
+		requestUrl.RawQuery = requestQuery.Encode()
 	}
 
 	err = performEmptyNoResponsePut(accessToken, requestUrl.String())
@@ -374,7 +444,10 @@ func PreviousTrack(accessToken *accessToken.AccessToken, device *object.Device) 
 	}
 
 	if device != nil {
-		requestUrl.Query().Add("device_id", device.Id)
+		requestQuery := requestUrl.Query()
+		requestQuery.Add("device_id", device.Id)
+
+		requestUrl.RawQuery = requestQuery.Encode()
 	}
 
 	err = performEmptyNoResponsePost(accessToken, requestUrl.String())

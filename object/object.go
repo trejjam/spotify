@@ -256,3 +256,95 @@ func (context Context) String() string {
 		context.Type,
 	)
 }
+
+type RepeatMode string
+
+type CurrentlyPlaying struct {
+	Timestamp            int
+	Device               Device
+	ProgresInMs          int    `json:"progress_ms"`
+	IsPlaying            bool   `json:"is_playing"`
+	CurrentlyPlayingType string `json:"currently_playing_type"`
+	Item                 Track
+	ShuffleState         bool       `json:"shuffle_state"`
+	RepeatState          RepeatMode `json:"repeat_state"`
+	Context              Context
+}
+
+type CurrentlyPlayingTrack struct {
+	Timestamp            int
+	Context              Context
+	ProgresInMs          int `json:"progress_ms"`
+	Item                 Track
+	CurrentlyPlayingType string `json:"currently_playing_type"`
+	IsPlaying            bool   `json:"is_playing"`
+}
+
+type Track struct {
+	Album            SimplifiedAlbum
+	Artists          []Artist
+	AvailableMarkets *[]string `json:"available_markets"`
+	DiscNumber       int       `json:"disc_number"`
+	DurationInMs     int       `json:"duration_ms"`
+	Explicit         bool
+	ExternalIds      ExternalId  `json:"external_ids"`
+	ExternalUrls     ExternalUrl `json:"external_urls"`
+	Href             string
+	Id               string
+	IsPlayable       bool   `json:"is_playable"`
+	LinkedFrom       *Track `json:"linked_from"`
+	Restrictions     *[]TrackRestriction
+	Name             string
+	Popularity       int
+	PreviewUrl       string `json:"preview_url"`
+	track_number     int
+	Type             string
+	Uri              string
+}
+
+type SimplifiedAlbum struct {
+	AlbumGroup       string `json:"album_group"`
+	AlbumType        string `json:"album_type"`
+	Artists          []SimplifiedArtist
+	AvailableMarkets []string    `json:"available_markets"`
+	ExternalUrls     ExternalUrl `json:"external_urls"`
+	Href             string
+	Id               string
+	Images           []Image
+	Name             string
+	Type             string
+	Uri              string
+}
+
+type Artist struct {
+	External_urls ExternalUrl `json:"external_urls"`
+	Followers     *Followers
+	Genres        []string
+	Href          string
+	Id            string
+	Images        []Image
+	Name          string
+	Popularity    int
+	Type          string
+	Uri           string
+}
+
+type ExternalId struct {
+	Isrc string
+	Ean  string
+	Upc  string
+}
+
+type TrackRestriction struct {
+	Reason string
+}
+
+type Followers struct {
+	//TODO not specified in public doc
+}
+
+type Image struct {
+	Height int
+	Url    string
+	Width  int
+}
