@@ -5,20 +5,8 @@ import (
 	. "github.com/trejjam/spotify/accessToken"
 	. "github.com/trejjam/spotify/player"
 	"os"
+	"time"
 )
-
-func printDevices(accessToken *AccessToken) {
-	devices, err := GetDevices(accessToken)
-	if err != nil {
-		panic(err)
-	}
-
-	for i := 0; i < len(devices.Devices); i++ {
-		device := devices.Devices[i]
-
-		fmt.Println(device.String())
-	}
-}
 
 func main() {
 	if len(os.Args) < 2 {
@@ -34,5 +22,21 @@ func main() {
 		panic(err)
 	}
 
-	printDevices(accessToken)
+	fmt.Println(accessToken.AccessToken)
+
+	devices, err := GetDevices(accessToken)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(devices.String())
+
+	now := time.Now()
+
+	recentlyPlayedTracks, err := RecentlyPlayedTracksAfter(accessToken, 1, now.Add(-time.Hour))
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(recentlyPlayedTracks.String())
 }

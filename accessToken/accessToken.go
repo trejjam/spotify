@@ -6,6 +6,7 @@ package accessToken
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -32,6 +33,28 @@ func (accessToken *AccessToken) CreateGetRequest(url string) (*http.Request, err
 	return request, nil
 }
 
+func (accessToken *AccessToken) CreatePostRequest(url string, body io.Reader) (*http.Request, error) {
+	request, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken.AccessToken))
+
+	return request, nil
+}
+
+func (accessToken *AccessToken) CreatePutRequest(url string, body io.Reader) (*http.Request, error) {
+	request, err := http.NewRequest("PUT", url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken.AccessToken))
+
+	return request, nil
+}
+
 var BonCookie = "MHwwfC0xODMxNzI2NTk2fC03NjkzMjUxNzAzMnwxfDF8MXwx"
 var UserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
 
@@ -46,15 +69,7 @@ func initHttpClient() (*http.Client, error) {
 		return nil, err
 	}
 
-	spotifyUrl := &url.URL{
-		Scheme:     "https",
-		Opaque:     "",
-		Host:       login.Domain,
-		Path:       login.Path,
-		ForceQuery: false,
-		RawPath:    "",
-		Fragment:   "",
-	}
+	spotifyUrl, err := url.Parse(login.Login)
 
 	var cookies []*http.Cookie
 	cookie := &http.Cookie{
