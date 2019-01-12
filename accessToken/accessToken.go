@@ -22,13 +22,19 @@ type AccessToken struct {
 	Expiration  int
 }
 
+func setHeaders(request *http.Request, accessToken *AccessToken) {
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken.AccessToken))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Accept", "application/json")
+}
+
 func (accessToken *AccessToken) CreateGetRequest(url string) (*http.Request, error) {
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken.AccessToken))
+	setHeaders(request, accessToken)
 
 	return request, nil
 }
@@ -39,7 +45,7 @@ func (accessToken *AccessToken) CreatePostRequest(url string, body io.Reader) (*
 		return nil, err
 	}
 
-	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken.AccessToken))
+	setHeaders(request, accessToken)
 
 	return request, nil
 }
@@ -50,7 +56,7 @@ func (accessToken *AccessToken) CreatePutRequest(url string, body io.Reader) (*h
 		return nil, err
 	}
 
-	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken.AccessToken))
+	setHeaders(request, accessToken)
 
 	return request, nil
 }
