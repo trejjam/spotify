@@ -185,6 +185,8 @@ func SeekTrack(accessToken *accessToken.AccessToken, positionInMs int, device *o
 		requestQuery.Add("device_id", device.Id)
 	}
 
+	requestUrl.RawQuery = requestQuery.Encode()
+
 	err = performEmptyNoResponsePut(accessToken, requestUrl.String())
 	if err != nil {
 		return err
@@ -220,6 +222,8 @@ func ToggleShuffle(accessToken *accessToken.AccessToken, shuffle bool, device *o
 	if device != nil {
 		requestQuery.Add("device_id", device.Id)
 	}
+
+	requestUrl.RawQuery = requestQuery.Encode()
 
 	err = performEmptyNoResponsePut(accessToken, requestUrl.String())
 	if err != nil {
@@ -265,8 +269,9 @@ func RecentlyPlayedTracksBefore(accessToken *accessToken.AccessToken, limit int,
 	requestQuery.Add("limit", strconv.Itoa(limit))
 	requestQuery.Add("before", strconv.FormatInt(before.Unix()*1000, 10))
 
-	playHistory := new(object.PlayItems)
+	requestUrl.RawQuery = requestQuery.Encode()
 
+	playHistory := new(object.PlayItems)
 	err = performGet(accessToken, requestUrl.String(), playHistory)
 	if err != nil {
 		return nil, err
@@ -285,8 +290,9 @@ func RecentlyPlayedTracksAfter(accessToken *accessToken.AccessToken, limit int, 
 	requestQuery.Add("limit", strconv.Itoa(limit))
 	requestQuery.Add("after", strconv.FormatInt(after.Unix()*1000, 10))
 
-	playHistory := new(object.PlayItems)
+	requestUrl.RawQuery = requestQuery.Encode()
 
+	playHistory := new(object.PlayItems)
 	err = performGet(accessToken, requestUrl.String(), playHistory)
 	if err != nil {
 		return nil, err
@@ -304,6 +310,36 @@ func Play(accessToken *accessToken.AccessToken, device *object.Device) error {
 	if device != nil {
 		requestUrl.Query().Add("device_id", device.Id)
 	}
+
+	err = performEmptyNoResponsePut(accessToken, requestUrl.String())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type RepeatMode string
+
+const (
+	RepeatModeTrack   RepeatMode = "track"
+	RepeatModeContext RepeatMode = "context"
+	RepeatModeOff     RepeatMode = "off"
+)
+
+func SetRepeatMode(accessToken *accessToken.AccessToken, state RepeatMode, device *object.Device) error {
+	requestUrl, err := url.Parse(player.SetRepeatModeOnUserPlayback)
+	if err != nil {
+		return err
+	}
+
+	requestQuery := requestUrl.Query()
+	requestQuery.Add("state", string(state))
+	if device != nil {
+		requestQuery.Add("device_id", device.Id)
+	}
+
+	requestUrl.RawQuery = requestQuery.Encode()
 
 	err = performEmptyNoResponsePut(accessToken, requestUrl.String())
 	if err != nil {

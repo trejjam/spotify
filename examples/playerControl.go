@@ -52,7 +52,22 @@ func main() {
 	}
 
 	if device1 != nil {
-		err = TransferPlayback(accessToken, false, device1)
+		err = TransferPlayback(accessToken, true, device1)
+		if err != nil {
+			panic(err)
+		}
+
+		err = SetRepeatMode(accessToken, RepeatModeTrack, device1)
+		if err != nil {
+			panic(err)
+		}
+
+		err = SetRepeatMode(accessToken, RepeatModeContext, device1)
+		if err != nil {
+			panic(err)
+		}
+
+		err = SetRepeatMode(accessToken, RepeatModeOff, device1)
 		if err != nil {
 			panic(err)
 		}
