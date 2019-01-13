@@ -167,7 +167,7 @@ func getAccessTokenUsingBrowse(client *http.Client) (*AccessToken, error) {
 	cookies := client.Jar.Cookies(browseResponse.Request.URL)
 
 	var accessToken string
-	var expiration int
+	var expiration int64
 	for i := 0; i < len(cookies); i++ {
 		cookie := cookies[i]
 
@@ -175,7 +175,7 @@ func getAccessTokenUsingBrowse(client *http.Client) (*AccessToken, error) {
 		case "wp_access_token":
 			accessToken = cookie.Value
 		case "wp_expiration":
-			expiration, err = strconv.Atoi(cookie.Value)
+			expiration, err = strconv.ParseInt(cookie.Value, 10, 0)
 			expiration /= 1000
 		}
 	}
