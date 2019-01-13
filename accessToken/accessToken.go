@@ -175,7 +175,7 @@ func getAccessTokenUsingBrowse(client *http.Client) (*AccessToken, error) {
 		case "wp_access_token":
 			accessToken = cookie.Value
 		case "wp_expiration":
-			expiration, err = strconv.ParseInt(cookie.Value, 10, 0)
+			expiration, err = strconv.ParseInt(cookie.Value, 10, 64)
 			expiration /= 1000
 		}
 	}
