@@ -19,7 +19,7 @@ import (
 
 type AccessToken struct {
 	AccessToken string
-	Expiration  int
+	Expiration  int64
 }
 
 func setHeaders(request *http.Request, accessToken *AccessToken) {
